@@ -1,0 +1,19 @@
+metadata:
+  id: CUSTOM_AWS_102
+  name: "Ensure mandatory tags exist"
+  category: "GENERAL_SECURITY"
+
+definition:
+  and:
+
+    - cond_type: attribute
+      resource_types:
+        - aws_vpc
+      attribute: tags.Environment
+      operator: exists
+
+    - cond_type: attribute
+      resource_types:
+        - aws_subnet
+      attribute: tags.Environment
+      operator: exists

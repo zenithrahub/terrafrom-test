@@ -1,3 +1,7 @@
-output "iam_policy_name" {
-  value = aws_iam_policy.admin_policy.name
+output "vpc_id" {
+  value = module.network.vpc_id
+}
+
+output "public_subnet_id" {
+  value = module.network.public_subnet_id
 }

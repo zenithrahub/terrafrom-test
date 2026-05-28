@@ -1,14 +1,15 @@
-resource "aws_iam_policy" "admin_policy" {
-  name = "terraform-governance-admin-policy"
+module "network" {
 
-  policy = jsonencode({
-    Version = "2012-10-17"
+  source              = "./modules/network"
+  vpc_cidr            = var.vpc_cidr
+  public_subnet_cidr  = var.public_subnet_cidr
+  private_subnet_cidr = var.private_subnet_cidr
 
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = "s3.GetObject"
-        Resource = "arn:aws:s3:::my-bucket/*"
-    }]
-  })
+  environment = terraform.workspace
+}
+
+module "security" {
+
+  source = "./modules/security"
+  vpc_id = module.network.vpc_id
 }

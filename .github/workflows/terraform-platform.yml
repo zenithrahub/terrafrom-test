@@ -1,0 +1,41 @@
+name: Terraform Multi Environment Platform
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+jobs:
+
+  terraform-validation:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        run: terraform -chdir=01-shared-network-foundation init
+
+      - name: Terraform Format Check
+        run: terraform -chdir=01-shared-network-foundation fmt -check
+
+      - name: Terraform Validate
+        run: terraform -chdir=01-shared-network-foundation validate
+
+      - name: Run Checkov Governance Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: 01-shared-network-foundation/
+          framework: terraform
+          external-checks-dir: policies
+          soft_fail: true

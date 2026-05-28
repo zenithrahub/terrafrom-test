@@ -1,237 +1,103 @@
-# IAM Least Privilege Governance Automation
+# Shared Network Foundation Platform
 
 # Scenario
 
-A cloud engineer creates an IAM policy with unrestricted administrator-level permissions.
+A platform engineering team is building a centralized multi-environment AWS infrastructure platform using Terraform.
 
-Terraform configuration:
+The organization requires:
 
-```hcl
-resource "aws_iam_policy" "admin_policy" {
+- isolated environments
+- reusable network foundation
+- Terraform workspace management
+- governance enforcement
+- CI/CD validation
+- secure network architecture
 
-  policy = jsonencode({
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = "*"
-        Resource = "*"
-      }
-    ]
-  })
-}
-```
+The platform team must provision:
 
-This configuration grants unrestricted access across AWS resources.
+- shared VPC
+- public subnet
+- private subnet
+- centralized security group
+- environment isolation foundation
 
-In enterprise cloud environments, wildcard IAM permissions create major security and compliance risks.
+using reusable Terraform modules.
 
 ---
 
 # Real-World Problem
 
-Without governance automation:
+Without shared foundational infrastructure:
 
-- excessive AWS permissions may be granted
-- privilege escalation becomes possible
-- attackers gain broader access during compromise
-- compliance standards fail
-- cloud security posture weakens
-- blast radius increases significantly
+- environments become inconsistent
+- networking standards drift
+- infrastructure duplication increases
+- governance becomes difficult
+- production deployments become risky
+- security posture weakens
 
-Manual IAM reviews become unreliable at scale.
-
-Organizations solve this problem using automated IAM governance enforcement inside CI/CD pipelines.
+As organizations scale, centralized network foundations become mandatory.
 
 ---
 
 # Objective
 
-The objective of this project is to implement governance automation that:
+Implement a production-style shared network foundation platform using:
 
-- detects overly permissive IAM policies
-- blocks wildcard IAM permissions
-- enforces least privilege principles
-- validates Terraform IAM configurations before deployment
-- integrates governance validation into CI/CD pipelines
-
----
-
-# Governance Rule
-
-The following IAM configurations must NOT be allowed:
-
-| Configuration | Restricted Value |
-| ------------- | ---------------- |
-| Action        | "*"              |
-| Resource      | "*"              |
-
-Wildcard administrator-style access must always be blocked.
-
----
-
-# Solution Architecture
-
-This project implements governance validation using:
-
-- Terraform
+- Terraform modules
+- Terraform workspaces
 - GitHub Actions
-- Checkov
-- Custom governance policies
-
-Workflow:
-
-```text
-Developer Pushes Terraform Code
-                ↓
-GitHub Actions Pipeline Starts
-                ↓
-Terraform Init
-                ↓
-Terraform Validate
-                ↓
-Checkov Governance Scan
-                ↓
-Custom Policy Validation
-                ↓
-❌ Overly Permissive IAM Policy Detected
-                ↓
-Pipeline Failed
-                ↓
-Terraform Deployment Blocked
-```
+- Checkov governance policies
+- reusable infrastructure patterns
 
 ---
 
-# Custom Governance Policy
+# Governance Requirements
 
-This project uses a custom governance policy:
+The platform must:
 
-```text
-policies/deny-wildcard-iam.yaml
-```
-
-The policy validates IAM configurations and blocks wildcard access permissions.
-
----
-
-# Expected Governance Failure
-
-When insecure IAM permissions exist:
-
-```hcl
-Action   = "*"
-Resource = "*"
-```
-
-The governance pipeline should fail automatically.
-
-Expected Result:
-
-```text
-❌ Governance Policy Violation Detected
-
-Policy:
-deny-wildcard-iam
-
-Reason:
-Wildcard IAM permissions are not allowed.
-```
-
-Infrastructure deployment must be blocked successfully.
+- block public SSH exposure
+- enforce mandatory tags
+- validate Terraform before deployment
+- support multiple environments
+- maintain isolated Terraform workspaces
 
 ---
 
-# Project Structure
+# Production Occurrence Frequency
 
-```text
-04-iam-least-privilege-governance/
-├── .github/
-│   └── workflows/
-│       └── governance.yml
-│
-├── policies/
-│   └── deny-wildcard-iam.yaml
-│
-├── main.tf
-├── provider.tf
-├── variables.tf
-├── outputs.tf
-│
-├── .gitignore
-├── task.md
-└── execution-guide.md
-```
+<span style="color:red;">VERY HIGH</span>
+
+This architecture pattern is commonly used in:
+
+- SaaS companies
+- enterprise cloud platforms
+- DevOps teams
+- platform engineering organizations
+- internal developer platforms
 
 ---
 
-# Important Repository Recommendation
+# Security Threat Level
 
-This project should be created as a completely separate GitHub repository.
+<span style="color:orange;">HIGH</span>
 
-Reason:
+Improper network governance may lead to:
 
-GitHub Actions workflows must exist at repository root level:
-
-```text
-.github/workflows/
-```
-
-Using a separate repository prevents:
-
-- workflow conflicts
-- governance execution issues
-- CI/CD collisions
-- unintended pipeline execution
-
----
-
-# Tools Used
-
-| Tool            | Purpose                       |
-| --------------- | ----------------------------- |
-| Terraform       | Infrastructure provisioning   |
-| AWS             | Cloud infrastructure platform |
-| GitHub Actions  | CI/CD automation              |
-| Checkov         | Governance scanning           |
-| Custom Policies | Policy enforcement            |
-
----
-
-# Concepts Covered
-
-This project demonstrates:
-
-- Terraform governance automation
-- IAM least privilege enforcement
-- IAM security governance
-- CI/CD governance pipelines
-- Policy-as-Code fundamentals
-- DevSecOps automation
-- Identity and access governance
+- public infrastructure exposure
+- lateral movement attacks
+- environment compromise
+- production outages
+- governance drift
 
 ---
 
 # Real-World Industry Usage
 
-IAM governance automation is commonly implemented in:
+This pattern is commonly implemented in:
 
-- Enterprise AWS environments
-- FinTech companies
-- Banking systems
-- Healthcare platforms
-- SaaS platforms
-- Cloud security teams
-- Platform engineering organizations
-
----
-
-# Production Relevance
-
-IAM governance automation is heavily used to prevent:
-
-- excessive AWS permissions
-- privilege escalation
-- insecure IAM policies
-- compliance violations
-- cloud identity security risks
-- overly permissive access controls
+- enterprise AWS platforms
+- platform engineering teams
+- multi-environment deployments
+- internal infrastructure platforms
+- regulated cloud environments
