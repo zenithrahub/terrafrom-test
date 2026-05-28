@@ -5,6 +5,7 @@ from checkov.terraform.checks.resource.base_resource_check import BaseResourceCh
 class IAMWildcardAccessCheck(BaseResourceCheck):
     def __init__(self):
         name = "Ensure IAM policies do not allow wildcard access"
+
         id = "CUSTOM_AWS_004"
 
         supported_resources = ["aws_iam_policy"]
