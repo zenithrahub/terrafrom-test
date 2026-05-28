@@ -1,0 +1,16 @@
+metadata:
+  id: CUSTOM_AWS_304
+  name: "Ensure ALB access logging enabled"
+  category: "LOGGING"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_lb
+
+  attribute: access_logs.enabled
+
+  operator: equals
+
+  value: true

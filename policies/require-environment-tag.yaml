@@ -1,0 +1,14 @@
+metadata:
+  id: CUSTOM_AWS_303
+  name: "Ensure Environment tag exists"
+  category: "GENERAL_SECURITY"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_instance
+
+  attribute: tags.Environment
+
+  operator: exists
