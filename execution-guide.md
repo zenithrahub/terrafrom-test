@@ -1,12 +1,11 @@
+
 # Execution Guide
 
 ## Initialize Terraform
 
 ```bash
 terraform init
-```
-
----
+````
 
 ## Create Terraform Workspaces
 
@@ -16,54 +15,31 @@ chmod +x scripts/workspace-setup.sh
 ./scripts/workspace-setup.sh
 ```
 
----
+## List Available Workspaces
 
-## Available Workspaces
-
-```text
-dev
-staging
-production
+```bash
+terraform workspace list
 ```
 
----
-
-## Select Workspace
-
-Example:
+## Select Development Workspace
 
 ```bash
 terraform workspace select dev
 ```
 
----
-
-## Run Terraform Validation
+## Run Terraform Format Check
 
 ```bash
-terraform fmt -check
+terraform fmt
+```
 
+## Validate Terraform Configuration
+
+```bash
 terraform validate
 ```
 
----
-
 ## Run Governance Validation
-
-Install Checkov:
-
-```bash
-pip install checkov
-```
-
-Run governance scan:
-
-```bash
-checkov -d . \
---external-checks-dir policies
-```
-
-or
 
 ```bash
 chmod +x scripts/validate.sh
@@ -71,7 +47,11 @@ chmod +x scripts/validate.sh
 ./scripts/validate.sh
 ```
 
----
+## Generate Terraform Plan
+
+```bash
+terraform plan
+```
 
 ## Deploy Infrastructure
 
@@ -83,15 +63,9 @@ chmod +x scripts/deploy.sh
 
 ---
 
-# GitHub Actions Governance Pipeline
+# GitHub Actions Workflow
 
-The CI/CD pipeline automatically performs:
-
-* Terraform initialization
-* Terraform formatting validation
-* Terraform configuration validation
-* Checkov governance scanning
-* Custom governance policy validation
+This project includes automated CI/CD validation using GitHub Actions.
 
 Pipeline location:
 
@@ -99,99 +73,84 @@ Pipeline location:
 .github/workflows/terraform-platform.yml
 ```
 
+The pipeline automatically runs:
+
+* Terraform Init
+* Terraform Format Validation
+* Terraform Validate
+* Checkov Governance Scan
+
+on every:
+
+* push to main
+* pull request
+
+---
+
+# Governance Validation
+
+Custom governance policies are located inside:
+
+```text
+policies/
+```
+
+Policies validate:
+
+* public EC2 exposure
+* insecure SSH access
+* mandatory environment tags
+
 ---
 
 # Expected Governance Failure
 
-This project intentionally contains an insecure Security Group configuration:
+The following insecure configuration intentionally exists:
+
+```hcl
+associate_public_ip_address = true
+```
+
+and:
 
 ```hcl
 cidr_blocks = ["0.0.0.0/0"]
 ```
 
-This should trigger governance validation failure.
-
-Expected result:
+Expected Checkov result:
 
 ```text
-Check: CUSTOM_AWS_101
-
-FAILED
-
-Reason:
-Public SSH access is not allowed.
+CUSTOM_AWS_201
+CUSTOM_AWS_202
+CUSTOM_AWS_203
 ```
 
----
-
-# Governance Remediation
-
-To pass governance validation:
-
-Replace:
-
-```hcl
-cidr_blocks = ["0.0.0.0/0"]
-```
-
-With restricted internal CIDR ranges:
-
-```hcl
-cidr_blocks = ["10.0.0.0/16"]
-```
-
-Then rerun validation.
+This demonstrates governance automation blocking insecure infrastructure configurations before deployment.
 
 ---
 
 # Optional Production Backend Configuration
 
-This project currently uses local Terraform state for simplicity.
-
-In real production environments, configure:
+If using remote Terraform state in production,
+configure:
 
 * AWS S3 backend
 * DynamoDB state locking
 
-using a dedicated `backend.tf` file.
-
-Recommended production setup:
-
-```text
-Terraform State
-        ↓
-S3 Backend
-        ↓
-DynamoDB State Locking
-```
+using a `backend.tf` configuration.
 
 ---
 
-# Recommended Execution Flow
+# Recommended Workflow
 
 ```text
-Create Workspace
-        ↓
-Initialize Terraform
-        ↓
-Run Validation
-        ↓
-Run Governance Scan
-        ↓
-Deploy Infrastructure
+Developer Changes Terraform Code
+                ↓
+Terraform Validation
+                ↓
+Checkov Governance Scan
+                ↓
+Governance Pass/Fail
+                ↓
+Deployment Allowed/Blocked
 ```
-
----
-
-# Production Relevance
-
-This project simulates how platform engineering teams build reusable multi-environment Terraform foundations with governance enforcement.
-
-Common real-world use cases:
-
-* centralized network foundations
-* environment isolation
-* governance automation
-* reusable infrastructure modules
-* CI/CD infrastructure validation
-* secure platform provisioning

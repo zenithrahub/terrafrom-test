@@ -1,103 +1,66 @@
-# Shared Network Foundation Platform
+# Development Environment Platform
 
 # Scenario
 
-A platform engineering team is building a centralized multi-environment AWS infrastructure platform using Terraform.
+A platform engineering team is provisioning a reusable development environment platform using Terraform.
 
 The organization requires:
 
-- isolated environments
-- reusable network foundation
-- Terraform workspace management
-- governance enforcement
-- CI/CD validation
-- secure network architecture
+- isolated development environments
+- EC2 provisioning automation
+- Terraform workspace isolation
+- governance validation
+- CI/CD enforcement
+- infrastructure standardization
 
-The platform team must provision:
-
-- shared VPC
-- public subnet
-- private subnet
-- centralized security group
-- environment isolation foundation
-
-using reusable Terraform modules.
+The platform team must prevent insecure infrastructure deployment before production promotion.
 
 ---
 
 # Real-World Problem
 
-Without shared foundational infrastructure:
+Without governance automation:
 
-- environments become inconsistent
-- networking standards drift
-- infrastructure duplication increases
-- governance becomes difficult
-- production deployments become risky
-- security posture weakens
-
-As organizations scale, centralized network foundations become mandatory.
+- public EC2 exposure occurs
+- insecure SSH access is deployed
+- environment consistency breaks
+- infrastructure standards drift
+- development environments become unmanaged
 
 ---
 
 # Objective
 
-Implement a production-style shared network foundation platform using:
+Implement a secure Terraform development environment platform using:
 
 - Terraform modules
 - Terraform workspaces
 - GitHub Actions
 - Checkov governance policies
-- reusable infrastructure patterns
-
----
-
-# Governance Requirements
-
-The platform must:
-
-- block public SSH exposure
-- enforce mandatory tags
-- validate Terraform before deployment
-- support multiple environments
-- maintain isolated Terraform workspaces
+- reusable deployment automation
 
 ---
 
 # Production Occurrence Frequency
 
-<span style="color:red;">VERY HIGH</span>
-
-This architecture pattern is commonly used in:
-
-- SaaS companies
-- enterprise cloud platforms
-- DevOps teams
-- platform engineering organizations
-- internal developer platforms
+VERY HIGH
 
 ---
 
 # Security Threat Level
 
-<span style="color:orange;">HIGH</span>
+HIGH
 
-Improper network governance may lead to:
-
-- public infrastructure exposure
-- lateral movement attacks
-- environment compromise
-- production outages
-- governance drift
+Public EC2 exposure and unrestricted SSH access are common cloud security risks in enterprise environments.
 
 ---
 
 # Real-World Industry Usage
 
-This pattern is commonly implemented in:
+Commonly implemented in:
 
-- enterprise AWS platforms
+- SaaS platforms
+- enterprise cloud environments
 - platform engineering teams
-- multi-environment deployments
-- internal infrastructure platforms
-- regulated cloud environments
+- DevOps organizations
+- internal developer platforms

@@ -1,15 +1,15 @@
-module "network" {
+module "security" {
 
-  source              = "./modules/network"
-  vpc_cidr            = var.vpc_cidr
-  public_subnet_cidr  = var.public_subnet_cidr
-  private_subnet_cidr = var.private_subnet_cidr
+  source = "./modules/security"
 
   environment = terraform.workspace
 }
 
-module "security" {
+module "ec2" {
 
-  source = "./modules/security"
-  vpc_id = module.network.vpc_id
+  source = "./modules/ec2"
+
+  security_group_id = module.security.security_group_id
+
+  environment = terraform.workspace
 }

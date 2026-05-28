@@ -1,9 +1,8 @@
-resource "aws_security_group" "platform_sg" {
+resource "aws_security_group" "dev_sg" {
 
-  name        = "platform-security-group"
+  name = "${var.environment}-security-group"
+
   description = "Intentional governance violation"
-
-  vpc_id = var.vpc_id
 
   ingress {
 
@@ -26,6 +25,6 @@ resource "aws_security_group" "platform_sg" {
   }
 
   tags = {
-    Name = "platform-security-group"
+    Environment = var.environment
   }
 }
