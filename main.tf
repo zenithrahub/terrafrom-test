@@ -7,8 +7,8 @@ resource "aws_iam_policy" "admin_policy" {
     Statement = [
       {
         Effect   = "Allow"
-        Action   = "*"
-        Resource = "*"
+        Action   = "s3.GetObject"
+        Resource = "arn:aws:s3:::example-bucket/*"
       }
     ]
   })
