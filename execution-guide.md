@@ -2,11 +2,11 @@
 
 # Overview
 
-This project demonstrates governance automation for preventing public S3 access using Terraform, Checkov, GitHub Actions, and custom governance policies.
+This project demonstrates governance automation for enforcing IAM least privilege principles using Terraform, Checkov, GitHub Actions, and custom governance policies.
 
-The project simulates a real-world enterprise scenario where an engineer accidentally disables S3 public access protection settings.
+The project simulates a real-world enterprise scenario where an engineer creates an overly permissive IAM policy with unrestricted AWS access.
 
-A governance automation pipeline validates Terraform configurations and automatically blocks insecure infrastructure deployments.
+A governance automation pipeline validates Terraform IAM configurations and automatically blocks insecure infrastructure deployments.
 
 ---
 
@@ -37,13 +37,13 @@ checkov --version
 The project already contains all required files and folder structure.
 
 ```text
-03-s3-public-access-governance/
+04-iam-least-privilege-governance/
 ├── .github/
 │   └── workflows/
 │       └── governance.yml
 │
 ├── policies/
-│   └── deny-public-s3.yaml
+│   └── deny-wildcard-iam.yaml
 │
 ├── main.tf
 ├── provider.tf
@@ -86,7 +86,7 @@ Example:
 
 ```bash
 git clone <repository-url>
-cd 03-s3-public-access-governance
+cd 04-iam-least-privilege-governance
 ```
 
 ---
@@ -123,17 +123,15 @@ Success! The configuration is valid.
 
 ---
 
-# Step 4 — Review Insecure S3 Configuration
+# Step 4 — Review Insecure IAM Policy
 
-The project intentionally contains insecure S3 public access settings.
+The project intentionally contains an overly permissive IAM policy.
 
 Example:
 
 ```hcl
-block_public_acls       = false
-block_public_policy     = false
-ignore_public_acls      = false
-restrict_public_buckets = false
+Action   = "*"
+Resource = "*"
 ```
 
 This simulates a real enterprise governance violation.
@@ -145,10 +143,10 @@ This simulates a real enterprise governance violation.
 The project contains a custom governance policy:
 
 ```text
-policies/deny-public-s3.yaml
+policies/deny-wildcard-iam.yaml
 ```
 
-The policy validates S3 public access settings before infrastructure deployment.
+The policy validates IAM permissions before infrastructure deployment.
 
 ---
 
@@ -157,14 +155,14 @@ The policy validates S3 public access settings before infrastructure deployment.
 Execute governance validation locally using Checkov.
 
 ```bash
-checkov -d . --external-checks-dir policies --check CUSTOM_AWS_003
+checkov -d . --external-checks-dir policies --check CUSTOM_AWS_004
 ```
 
 ---
 
 # Step 7 — Observe Governance Failure
 
-The governance scan should fail because insecure S3 public access settings exist.
+The governance scan should fail because wildcard IAM permissions exist.
 
 Expected Result:
 
@@ -172,10 +170,10 @@ Expected Result:
 ❌ Governance Policy Violation Detected
 
 Policy:
-deny-public-s3
+deny-wildcard-iam
 
 Reason:
-S3 public access protection settings are disabled.
+Wildcard IAM permissions are not allowed.
 ```
 
 This confirms governance automation is working correctly.
@@ -189,7 +187,7 @@ Initialize git repository if required:
 ```bash
 git init
 git add .
-git commit -m "Initial S3 public access governance automation setup"
+git commit -m "Initial IAM least privilege governance automation setup"
 ```
 
 Push repository to GitHub:
@@ -244,15 +242,24 @@ Infrastructure deployment should be blocked successfully.
 
 # Step 11 — Fix Governance Violation
 
-Update S3 public access settings inside `main.tf`.
+Update IAM permissions inside `main.tf`.
 
 Example:
 
 ```hcl
-block_public_acls       = true
-block_public_policy     = true
-ignore_public_acls      = true
-restrict_public_buckets = true
+Statement = [
+  {
+    Effect = "Allow"
+
+    Action = [
+      "s3:GetObject"
+    ]
+
+    Resource = [
+      "arn:aws:s3:::example-bucket/*"
+    ]
+  }
+]
 ```
 
 ---
@@ -262,7 +269,7 @@ restrict_public_buckets = true
 Execute governance validation again:
 
 ```bash
-checkov -d . --external-checks-dir policies --check CUSTOM_AWS_003
+checkov -d . --external-checks-dir policies --check CUSTOM_AWS_004
 ```
 
 Expected Result:
@@ -281,22 +288,22 @@ The governance validation should now pass successfully.
 This project demonstrates:
 
 - Terraform governance automation
-- S3 security governance
-- Storage compliance enforcement
+- IAM least privilege enforcement
+- Identity security governance
 - CI/CD governance validation
 - Policy-as-Code implementation
 - DevSecOps automation
-- Infrastructure security validation
+- Infrastructure identity compliance validation
 
 ---
 
 # Production Relevance
 
-S3 governance automation is widely used in enterprise cloud environments for:
+IAM governance automation is widely used in enterprise cloud environments for:
 
-- storage security enforcement
-- public access prevention
+- identity security enforcement
+- least privilege implementation
 - compliance validation
-- cloud security governance
-- infrastructure compliance automation
-- secure cloud storage management
+- access governance
+- privilege escalation prevention
+- secure cloud identity management

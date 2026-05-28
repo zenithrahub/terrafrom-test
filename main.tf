@@ -1,16 +1,15 @@
-resource "aws_s3_bucket" "public_bucket" {
-  bucket = "terraform-governance-demo-bucket-12345"
+resource "aws_iam_policy" "admin_policy" {
+  name = "terraform-governance-admin-policy"
 
-  tags = {
-    Name = "public-governance-demo"
-  }
-}
+  policy = jsonencode({
+    Version = "2012-10-17"
 
-resource "aws_s3_bucket_public_access_block" "public_access" {
-  bucket = aws_s3_bucket.public_bucket.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "*"
+      }
+    ]
+  })
 }

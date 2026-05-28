@@ -1,28 +1,29 @@
-# S3 Public Access Governance Automation
+# IAM Least Privilege Governance Automation
 
 # Scenario
 
-A cloud engineering team provisions AWS infrastructure using Terraform.
-
-One engineer accidentally creates an S3 bucket with public access enabled.
+A cloud engineer creates an IAM policy with unrestricted administrator-level permissions.
 
 Terraform configuration:
 
 ```hcl
-resource "aws_s3_bucket_public_access_block" "public_access" {
+resource "aws_iam_policy" "admin_policy" {
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  policy = jsonencode({
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "*"
+      }
+    ]
+  })
 }
 ```
 
-This configuration disables S3 public access protection mechanisms.
+This configuration grants unrestricted access across AWS resources.
 
-As a result, S3 objects and bucket data may become publicly accessible from the internet.
-
-In enterprise cloud environments, this is considered a critical security and compliance violation.
+In enterprise cloud environments, wildcard IAM permissions create major security and compliance risks.
 
 ---
 
@@ -30,17 +31,16 @@ In enterprise cloud environments, this is considered a critical security and com
 
 Without governance automation:
 
-- sensitive files may become public
-- confidential data exposure may occur
-- compliance requirements may fail
+- excessive AWS permissions may be granted
+- privilege escalation becomes possible
+- attackers gain broader access during compromise
+- compliance standards fail
 - cloud security posture weakens
-- organizations become vulnerable to data breaches
+- blast radius increases significantly
 
-Public S3 exposure is one of the most common cloud security incidents in AWS environments.
+Manual IAM reviews become unreliable at scale.
 
-Manual infrastructure reviews do not scale effectively across large engineering teams.
-
-Organizations solve this problem using automated governance enforcement inside CI/CD pipelines.
+Organizations solve this problem using automated IAM governance enforcement inside CI/CD pipelines.
 
 ---
 
@@ -48,26 +48,24 @@ Organizations solve this problem using automated governance enforcement inside C
 
 The objective of this project is to implement governance automation that:
 
-- detects insecure S3 configurations
-- blocks public S3 exposure
-- enforces storage security policies
-- validates Terraform infrastructure before deployment
+- detects overly permissive IAM policies
+- blocks wildcard IAM permissions
+- enforces least privilege principles
+- validates Terraform IAM configurations before deployment
 - integrates governance validation into CI/CD pipelines
 
 ---
 
 # Governance Rule
 
-The following S3 public access settings must always be enabled:
+The following IAM configurations must NOT be allowed:
 
-| Configuration           | Required Value |
-| ----------------------- | -------------- |
-| block_public_acls       | true           |
-| block_public_policy     | true           |
-| ignore_public_acls      | true           |
-| restrict_public_buckets | true           |
+| Configuration | Restricted Value |
+| ------------- | ---------------- |
+| Action        | "*"              |
+| Resource      | "*"              |
 
-If any value is `false`, governance validation must fail.
+Wildcard administrator-style access must always be blocked.
 
 ---
 
@@ -95,7 +93,7 @@ Checkov Governance Scan
                 ↓
 Custom Policy Validation
                 ↓
-❌ Public S3 Access Detected
+❌ Overly Permissive IAM Policy Detected
                 ↓
 Pipeline Failed
                 ↓
@@ -109,22 +107,20 @@ Terraform Deployment Blocked
 This project uses a custom governance policy:
 
 ```text
-policies/deny-public-s3.yaml
+policies/deny-wildcard-iam.yaml
 ```
 
-The policy validates Terraform S3 configurations and blocks insecure public access settings.
+The policy validates IAM configurations and blocks wildcard access permissions.
 
 ---
 
 # Expected Governance Failure
 
-When insecure S3 public access settings exist:
+When insecure IAM permissions exist:
 
 ```hcl
-block_public_acls       = false
-block_public_policy     = false
-ignore_public_acls      = false
-restrict_public_buckets = false
+Action   = "*"
+Resource = "*"
 ```
 
 The governance pipeline should fail automatically.
@@ -135,10 +131,10 @@ Expected Result:
 ❌ Governance Policy Violation Detected
 
 Policy:
-deny-public-s3
+deny-wildcard-iam
 
 Reason:
-S3 public access protection settings are disabled.
+Wildcard IAM permissions are not allowed.
 ```
 
 Infrastructure deployment must be blocked successfully.
@@ -148,13 +144,13 @@ Infrastructure deployment must be blocked successfully.
 # Project Structure
 
 ```text
-03-s3-public-access-governance/
+04-iam-least-privilege-governance/
 ├── .github/
 │   └── workflows/
 │       └── governance.yml
 │
 ├── policies/
-│   └── deny-public-s3.yaml
+│   └── deny-wildcard-iam.yaml
 │
 ├── main.tf
 ├── provider.tf
@@ -183,9 +179,9 @@ GitHub Actions workflows must exist at repository root level:
 Using a separate repository prevents:
 
 - workflow conflicts
-- governance pipeline collisions
-- unintended CI/CD execution
-- project dependency issues
+- governance execution issues
+- CI/CD collisions
+- unintended pipeline execution
 
 ---
 
@@ -206,24 +202,24 @@ Using a separate repository prevents:
 This project demonstrates:
 
 - Terraform governance automation
-- S3 security governance
-- Storage compliance enforcement
+- IAM least privilege enforcement
+- IAM security governance
 - CI/CD governance pipelines
 - Policy-as-Code fundamentals
 - DevSecOps automation
-- Cloud storage security validation
+- Identity and access governance
 
 ---
 
 # Real-World Industry Usage
 
-S3 governance automation is commonly implemented in:
+IAM governance automation is commonly implemented in:
 
-- FinTech companies
-- Healthcare systems
 - Enterprise AWS environments
+- FinTech companies
+- Banking systems
+- Healthcare platforms
 - SaaS platforms
-- Banking infrastructure
 - Cloud security teams
 - Platform engineering organizations
 
@@ -231,10 +227,11 @@ S3 governance automation is commonly implemented in:
 
 # Production Relevance
 
-This governance pattern is heavily used in enterprise environments to prevent:
+IAM governance automation is heavily used to prevent:
 
-- public cloud storage exposure
-- accidental data leaks
-- insecure bucket configurations
+- excessive AWS permissions
+- privilege escalation
+- insecure IAM policies
 - compliance violations
-- storage security misconfigurations
+- cloud identity security risks
+- overly permissive access controls

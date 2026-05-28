@@ -1,3 +1,3 @@
-output "bucket_name" {
-  value = aws_s3_bucket.public_bucket.bucket
+output "iam_policy_name" {
+  value = aws_iam_policy.admin_policy.name
 }
