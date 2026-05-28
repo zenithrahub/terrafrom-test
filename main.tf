@@ -4,8 +4,8 @@ resource "aws_instance" "web_server" {
 
   tags = {
     Name        = "web-server"
-    Owner       = "platform-team"
-    Environment = "dev"
+   # Owner       = "platform-team"
+    # Environment = "dev"
     CostCenter  = "cloud-operations"
   }
 }
