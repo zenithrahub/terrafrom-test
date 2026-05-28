@@ -1,0 +1,34 @@
+metadata:
+  id: CUSTOM_AWS_002
+  name: "Ensure mandatory tags are present"
+  category: "GENERAL_SECURITY"
+
+definition:
+  and:
+
+    - cond_type: attribute
+
+      resource_types:
+        - aws_instance
+
+      attribute: tags.Owner
+
+      operator: exists
+
+    - cond_type: attribute
+
+      resource_types:
+        - aws_instance
+
+      attribute: tags.Environment
+
+      operator: exists
+
+    - cond_type: attribute
+
+      resource_types:
+        - aws_instance
+
+      attribute: tags.CostCenter
+
+      operator: exists
