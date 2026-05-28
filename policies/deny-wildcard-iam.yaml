@@ -1,0 +1,16 @@
+metadata:
+  id: CUSTOM_AWS_505
+  name: "Ensure wildcard IAM permissions are blocked"
+  category: "IAM"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_iam_policy
+
+  attribute: policy
+
+  operator: not_contains
+
+  value: "\"Resource\":\"*\""

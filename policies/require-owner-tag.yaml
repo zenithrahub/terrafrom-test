@@ -1,6 +1,6 @@
 metadata:
-  id: CUSTOM_AWS_504
-  name: "Ensure Environment tag exists"
+  id: CUSTOM_AWS_501
+  name: "Ensure Owner tag exists"
   category: "GENERAL_SECURITY"
 
 definition:
@@ -9,6 +9,6 @@ definition:
   resource_types:
     - aws_s3_bucket
 
-  attribute: tags.Environment
+  attribute: tags.Owner
 
   operator: exists

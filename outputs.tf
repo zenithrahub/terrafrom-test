@@ -1,3 +1,3 @@
-output "alb_dns_name" {
-  value = module.alb.alb_dns_name
+output "iam_role_name" {
+  value = module.iam.role_name
 }

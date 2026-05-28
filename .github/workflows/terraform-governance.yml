@@ -1,4 +1,4 @@
-name: Terraform Production Environment Platform
+name: Terraform Environment Governance
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
 
-  terraform-validation:
+  governance-validation:
 
     runs-on: ubuntu-latest
 

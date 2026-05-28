@@ -1,0 +1,16 @@
+metadata:
+  id: CUSTOM_AWS_503
+  name: "Ensure admin access is not allowed"
+  category: "IAM"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_iam_policy
+
+  attribute: policy
+
+  operator: not_contains
+
+  value: "\"Action\":\"*\""

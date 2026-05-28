@@ -1,31 +1,13 @@
-module "security" {
+module "governance_tags" {
 
-  source = "./modules/security"
-
-  environment = terraform.workspace
-}
-
-module "alb" {
-
-  source = "./modules/alb"
-
-  security_group_id = module.security.security_group_id
+  source = "./modules/governance-tags"
 
   environment = terraform.workspace
 }
 
-module "ec2" {
+module "iam" {
 
-  source = "./modules/ec2"
-
-  security_group_id = module.security.security_group_id
-
-  environment = terraform.workspace
-}
-
-module "autoscaling" {
-
-  source = "./modules/autoscaling"
+  source = "./modules/iam"
 
   environment = terraform.workspace
 }

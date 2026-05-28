@@ -63,7 +63,7 @@ This validation performs:
 * Terraform format validation
 * Terraform configuration validation
 * Checkov governance scanning
-* Custom policy enforcement
+* Custom governance policy validation
 
 ---
 
@@ -87,20 +87,20 @@ chmod +x scripts/deploy.sh
 
 # GitHub Actions Workflow
 
-This project includes automated CI/CD validation using GitHub Actions.
+This project includes automated governance validation using GitHub Actions.
 
 Workflow location:
 
 ```text
-.github/workflows/terraform-platform.yml
+.github/workflows/terraform-governance.yml
 ```
 
-The pipeline automatically runs:
+The pipeline automatically performs:
 
 * Terraform Init
 * Terraform Format Validation
 * Terraform Validate
-* Checkov Governance Scan
+* Checkov Governance Validation
 
 on every:
 
@@ -119,11 +119,11 @@ policies/
 
 Policies validate:
 
-* public EC2 exposure
-* insecure SSH access
-* unencrypted EBS volumes
-* missing ALB logging
-* missing environment tags
+* Owner tag enforcement
+* CostCenter tag enforcement
+* Environment tag enforcement
+* wildcard IAM permissions
+* administrator privilege escalation
 
 ---
 
@@ -132,37 +132,30 @@ Policies validate:
 The following insecure configurations intentionally exist:
 
 ```hcl
-associate_public_ip_address = true
+Action = "*"
 ```
 
 ```hcl
-cidr_blocks = ["0.0.0.0/0"]
+Resource = "*"
 ```
 
 ```hcl
-encrypted = false
-```
-
-```hcl
-enable_deletion_protection = false
-```
-
-```hcl
-monitoring = false
+tags = {
+  Environment = var.environment
+}
 ```
 
 Expected Checkov results:
 
 ```text
-CUSTOM_AWS_401
-CUSTOM_AWS_402
-CUSTOM_AWS_403
-CUSTOM_AWS_404
-CUSTOM_AWS_405
-
+CUSTOM_AWS_501
+CUSTOM_AWS_502
+CUSTOM_AWS_503
+CUSTOM_AWS_504
+CUSTOM_AWS_505
 ```
 
-This demonstrates governance automation blocking insecure production infrastructure before deployment.
+This demonstrates governance automation blocking insecure IAM permissions and missing governance standards before deployment.
 
 ---
 
@@ -196,10 +189,10 @@ Deployment Allowed/Blocked
 
 # Production Usage
 
-This platform architecture pattern is commonly used in:
+This governance architecture pattern is commonly used in:
 
-* enterprise production platforms
-* cloud-native SaaS systems
-* platform engineering organizations
-* regulated infrastructure environments
-* multi-environment DevSecOps platforms
+* enterprise cloud governance platforms
+* regulated AWS environments
+* DevSecOps organizations
+* platform engineering teams
+* centralized IAM governance systems
