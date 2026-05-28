@@ -1,0 +1,16 @@
+metadata:
+  id: CUSTOM_AWS_201
+  name: "Ensure EC2 instances do not use public IP"
+  category: "NETWORK_SECURITY"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_instance
+
+  attribute: associate_public_ip_address
+
+  operator: not_equals
+
+  value: true
