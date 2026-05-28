@@ -6,6 +6,6 @@ resource "aws_instance" "web_server" {
     Name        = "web-server"
     Owner       = "platform-team"
     Environment = "dev"
-    CostCenter  = "cloud-operations"
+    #  CostCenter  = "cloud-operations"
   }
 }

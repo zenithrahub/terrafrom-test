@@ -31,4 +31,4 @@ definition:
 
       attribute: tags.CostCenter
 
-      operator: exists
+      operator: not_exists
