@@ -1,3 +1,3 @@
 output "instance_id" {
-  value = aws_instance.staging_server.id
+  value = aws_instance.production_server.id
 }

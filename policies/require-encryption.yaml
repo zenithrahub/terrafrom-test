@@ -1,0 +1,16 @@
+metadata:
+  id: CUSTOM_AWS_403
+  name: "Ensure EBS encryption enabled"
+  category: "ENCRYPTION"
+
+definition:
+  cond_type: attribute
+
+  resource_types:
+    - aws_instance
+
+  attribute: root_block_device.encrypted
+
+  operator: equals
+
+  value: true

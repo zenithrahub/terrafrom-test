@@ -1,5 +1,5 @@
 metadata:
-  id: CUSTOM_AWS_301
+  id: CUSTOM_AWS_402
   name: "Ensure no public SSH access"
   category: "NETWORK_SECURITY"
 

@@ -26,10 +26,10 @@ terraform workspace list
 
 ---
 
-## Select Staging Workspace
+## Select Production Workspace
 
 ```bash
-terraform workspace select staging
+terraform workspace select production
 ```
 
 ---
@@ -121,8 +121,9 @@ Policies validate:
 
 * public EC2 exposure
 * insecure SSH access
+* unencrypted EBS volumes
+* missing ALB logging
 * missing environment tags
-* ALB logging configuration
 
 ---
 
@@ -139,19 +140,29 @@ cidr_blocks = ["0.0.0.0/0"]
 ```
 
 ```hcl
+encrypted = false
+```
+
+```hcl
 enable_deletion_protection = false
+```
+
+```hcl
+monitoring = false
 ```
 
 Expected Checkov results:
 
 ```text
-CUSTOM_AWS_301
-CUSTOM_AWS_302
-CUSTOM_AWS_303
-CUSTOM_AWS_304
+CUSTOM_AWS_401
+CUSTOM_AWS_402
+CUSTOM_AWS_403
+CUSTOM_AWS_404
+CUSTOM_AWS_405
+
 ```
 
-This demonstrates governance automation blocking insecure staging infrastructure before production promotion.
+This demonstrates governance automation blocking insecure production infrastructure before deployment.
 
 ---
 
@@ -187,8 +198,8 @@ Deployment Allowed/Blocked
 
 This platform architecture pattern is commonly used in:
 
-* enterprise staging platforms
-* SaaS deployment pipelines
-* DevSecOps environments
-* multi-environment Terraform platforms
-* cloud-native application validation systems
+* enterprise production platforms
+* cloud-native SaaS systems
+* platform engineering organizations
+* regulated infrastructure environments
+* multi-environment DevSecOps platforms

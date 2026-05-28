@@ -1,6 +1,6 @@
 #!/bin/bash
 
-terraform workspace select staging
+terraform workspace select production
 
 terraform init
 

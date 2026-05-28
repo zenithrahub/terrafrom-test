@@ -22,3 +22,10 @@ module "ec2" {
 
   environment = terraform.workspace
 }
+
+module "autoscaling" {
+
+  source = "./modules/autoscaling"
+
+  environment = terraform.workspace
+}

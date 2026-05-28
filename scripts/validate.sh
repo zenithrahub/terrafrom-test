@@ -6,4 +6,5 @@ terraform fmt -check
 
 terraform validate
 
-checkov -d . --external-checks-dir policies
+checkov -d . \
+--external-checks-dir policies

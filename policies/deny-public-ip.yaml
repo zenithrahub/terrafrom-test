@@ -1,5 +1,5 @@
 metadata:
-  id: CUSTOM_AWS_302
+  id: CUSTOM_AWS_401
   name: "Ensure EC2 instances are not public"
   category: "NETWORK_SECURITY"
 

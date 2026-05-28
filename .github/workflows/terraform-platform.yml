@@ -1,4 +1,4 @@
-name: Terraform Staging Environment Platform
+name: Terraform Production Environment Platform
 
 on:
   push:

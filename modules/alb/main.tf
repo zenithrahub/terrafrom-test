@@ -1,4 +1,4 @@
-resource "aws_lb" "staging_alb" {
+resource "aws_lb" "production_alb" {
 
   name               = "${var.environment}-alb"
   internal           = false
