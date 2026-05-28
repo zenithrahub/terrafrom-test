@@ -1,0 +1,31 @@
+name: Terraform Governance Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  governance-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform -chdir=01-public-security-group-governance init
+
+      - name: Terraform Validate
+        run: terraform -chdir=01-public-security-group-governance validate
+
+      - name: Run Checkov Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: 01-public-security-group-governance/
+          framework: terraform
+          external-checks-dir: policies
