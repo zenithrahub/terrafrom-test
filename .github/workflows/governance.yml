@@ -39,4 +39,4 @@ jobs:
           checkov \
           -d . \
           --external-checks-dir policies \
-          --check CUSTOM_AWS_002
+          --check CUSTOM_AWS_003

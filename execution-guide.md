@@ -2,11 +2,11 @@
 
 # Overview
 
-This project demonstrates governance automation for mandatory Terraform tagging policies.
+This project demonstrates governance automation for preventing public S3 access using Terraform, Checkov, GitHub Actions, and custom governance policies.
 
-The project simulates a real-world enterprise scenario where an engineer provisions AWS infrastructure without required organizational tags.
+The project simulates a real-world enterprise scenario where an engineer accidentally disables S3 public access protection settings.
 
-A governance automation pipeline validates Terraform code using custom policies and automatically blocks non-compliant infrastructure deployments.
+A governance automation pipeline validates Terraform configurations and automatically blocks insecure infrastructure deployments.
 
 ---
 
@@ -14,11 +14,11 @@ A governance automation pipeline validates Terraform code using custom policies 
 
 Ensure the following tools are installed:
 
-* Terraform >= 1.5
-* Python >= 3.10
-* Git
-* AWS CLI
-* Checkov
+- Terraform >= 1.5
+- Python >= 3.10
+- Git
+- AWS CLI
+- Checkov
 
 Verify installation:
 
@@ -36,14 +36,14 @@ checkov --version
 
 The project already contains all required files and folder structure.
 
-```text id="8e08xm"
-02-mandatory-tag-governance/
+```text
+03-s3-public-access-governance/
 ├── .github/
 │   └── workflows/
 │       └── governance.yml
 │
 ├── policies/
-│   └── mandatory-tags.yaml
+│   └── deny-public-s3.yaml
 │
 ├── main.tf
 ├── provider.tf
@@ -65,35 +65,35 @@ Reason:
 
 GitHub Actions workflows must exist at repository root level:
 
-```text id="nq7gji"
+```text
 .github/workflows/
 ```
 
 Using a separate repository prevents:
 
-* CI/CD conflicts
-* workflow collisions
-* unintended pipeline triggers
-* governance execution issues
+- workflow conflicts
+- governance execution issues
+- CI/CD collisions
+- unintended pipeline execution
 
 ---
 
 # Step 1 — Clone or Copy Project Files
 
-Clone the repository or copy the complete project files into a dedicated GitHub repository.
+Clone the repository or copy all project files into a dedicated GitHub repository.
 
 Example:
 
 ```bash
 git clone <repository-url>
-cd 02-mandatory-tag-governance
+cd 03-s3-public-access-governance
 ```
 
 ---
 
 # Step 2 — Initialize Terraform
 
-Initialize Terraform providers and backend configuration.
+Initialize Terraform providers.
 
 ```bash
 terraform init
@@ -101,7 +101,7 @@ terraform init
 
 Expected Result:
 
-```text id="0f7lsz"
+```text
 Terraform has been successfully initialized!
 ```
 
@@ -117,29 +117,24 @@ terraform validate
 
 Expected Result:
 
-```text id="vjlwm6"
+```text
 Success! The configuration is valid.
 ```
 
 ---
 
-# Step 4 — Review Terraform Configuration
+# Step 4 — Review Insecure S3 Configuration
 
-The project intentionally contains a governance violation.
+The project intentionally contains insecure S3 public access settings.
 
 Example:
 
-```hcl id="wghm67"
-tags = {
-  Name = "web-server"
-}
+```hcl
+block_public_acls       = false
+block_public_policy     = false
+ignore_public_acls      = false
+restrict_public_buckets = false
 ```
-
-The following mandatory tags are intentionally missing:
-
-* Owner
-* Environment
-* CostCenter
 
 This simulates a real enterprise governance violation.
 
@@ -149,11 +144,11 @@ This simulates a real enterprise governance violation.
 
 The project contains a custom governance policy:
 
-```text id="t0l5fs"
-policies/mandatory-tags.yaml
+```text
+policies/deny-public-s3.yaml
 ```
 
-The policy validates Terraform resources and ensures mandatory governance tags exist before infrastructure deployment.
+The policy validates S3 public access settings before infrastructure deployment.
 
 ---
 
@@ -162,25 +157,25 @@ The policy validates Terraform resources and ensures mandatory governance tags e
 Execute governance validation locally using Checkov.
 
 ```bash
-checkov -d . --external-checks-dir policies
+checkov -d . --external-checks-dir policies --check CUSTOM_AWS_003
 ```
 
 ---
 
 # Step 7 — Observe Governance Failure
 
-The governance scan should fail because mandatory tags are missing.
+The governance scan should fail because insecure S3 public access settings exist.
 
 Expected Result:
 
-```text id="j1okhc"
+```text
 ❌ Governance Policy Violation Detected
 
 Policy:
-mandatory-tags
+deny-public-s3
 
 Reason:
-Required governance tags are missing.
+S3 public access protection settings are disabled.
 ```
 
 This confirms governance automation is working correctly.
@@ -194,10 +189,10 @@ Initialize git repository if required:
 ```bash
 git init
 git add .
-git commit -m "Initial mandatory tag governance automation setup"
+git commit -m "Initial S3 public access governance automation setup"
 ```
 
-Push code to GitHub:
+Push repository to GitHub:
 
 ```bash
 git branch -M main
@@ -211,17 +206,17 @@ git push -u origin main
 
 Navigate to:
 
-```text id="jlwmcm"
+```text
 GitHub Repository
         ↓
 Actions Tab
 ```
 
-The governance pipeline starts automatically after push.
+The governance pipeline starts automatically.
 
 Pipeline stages:
 
-```text id="t5a1s4"
+```text
 Terraform Init
         ↓
 Terraform Validate
@@ -239,7 +234,7 @@ The GitHub Actions workflow should fail automatically because the Terraform conf
 
 Expected pipeline result:
 
-```text id="yjlwm1"
+```text
 ❌ Governance Validation Failed
 ```
 
@@ -249,32 +244,30 @@ Infrastructure deployment should be blocked successfully.
 
 # Step 11 — Fix Governance Violation
 
-Update Terraform tags inside `main.tf`.
+Update S3 public access settings inside `main.tf`.
 
 Example:
 
-```hcl id="on9s0n"
-tags = {
-  Name        = "web-server"
-  Owner       = "platform-team"
-  Environment = "dev"
-  CostCenter  = "cloud-operations"
-}
+```hcl
+block_public_acls       = true
+block_public_policy     = true
+ignore_public_acls      = true
+restrict_public_buckets = true
 ```
 
 ---
 
 # Step 12 — Re-Run Governance Validation
 
-Execute governance scan again:
+Execute governance validation again:
 
 ```bash
-checkov -d . --external-checks-dir policies
+checkov -d . --external-checks-dir policies --check CUSTOM_AWS_003
 ```
 
 Expected Result:
 
-```text id="jlwm9y"
+```text
 Passed checks: 1
 Failed checks: 0
 ```
@@ -287,23 +280,23 @@ The governance validation should now pass successfully.
 
 This project demonstrates:
 
-* Terraform governance automation
-* Mandatory tagging enforcement
-* CI/CD governance validation
-* Policy-as-Code implementation
-* Infrastructure compliance automation
-* DevSecOps governance controls
-* Enterprise cloud governance workflows
+- Terraform governance automation
+- S3 security governance
+- Storage compliance enforcement
+- CI/CD governance validation
+- Policy-as-Code implementation
+- DevSecOps automation
+- Infrastructure security validation
 
 ---
 
 # Production Relevance
 
-Mandatory tagging governance is widely used in enterprise cloud environments for:
+S3 governance automation is widely used in enterprise cloud environments for:
 
-* cloud cost allocation
-* FinOps governance
-* resource ownership tracking
-* automation workflows
-* compliance reporting
-* infrastructure lifecycle management
+- storage security enforcement
+- public access prevention
+- compliance validation
+- cloud security governance
+- infrastructure compliance automation
+- secure cloud storage management

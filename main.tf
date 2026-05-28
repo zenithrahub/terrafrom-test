@@ -1,11 +1,16 @@
-resource "aws_instance" "web_server" {
-  ami           = "ami-03f4878755434977f"
-  instance_type = "t2.micro"
+resource "aws_s3_bucket" "public_bucket" {
+  bucket = "terraform-governance-demo-bucket-12345"
 
   tags = {
-    Name        = "web-server"
-    Owner       = "platform-team"
-    Environment = "dev"
-    #  CostCenter  = "cloud-operations"
+    Name = "public-governance-demo"
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "public_access" {
+  bucket = aws_s3_bucket.public_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }

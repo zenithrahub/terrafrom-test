@@ -1,31 +1,28 @@
-# Mandatory Tag Governance Automation
+# S3 Public Access Governance Automation
 
 # Scenario
 
 A cloud engineering team provisions AWS infrastructure using Terraform.
 
-One engineer creates an EC2 instance without mandatory organizational tags.
+One engineer accidentally creates an S3 bucket with public access enabled.
 
 Terraform configuration:
 
 ```hcl
-resource "aws_instance" "web_server" {
-  ami           = "ami-xxxxxxxx"
-  instance_type = "t2.micro"
+resource "aws_s3_bucket_public_access_block" "public_access" {
 
-  tags = {
-    Name = "web-server"
-  }
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 ```
 
-The resource is missing required governance tags:
+This configuration disables S3 public access protection mechanisms.
 
-- Owner
-- Environment
-- CostCenter
+As a result, S3 objects and bucket data may become publicly accessible from the internet.
 
-In enterprise environments, missing tags create operational, financial, and compliance problems.
+In enterprise cloud environments, this is considered a critical security and compliance violation.
 
 ---
 
@@ -33,16 +30,17 @@ In enterprise environments, missing tags create operational, financial, and comp
 
 Without governance automation:
 
-- resource ownership becomes unknown
-- cloud cost allocation fails
-- FinOps reporting becomes inaccurate
-- automation workflows break
-- unused resources remain unmanaged
-- compliance tracking becomes difficult
+- sensitive files may become public
+- confidential data exposure may occur
+- compliance requirements may fail
+- cloud security posture weakens
+- organizations become vulnerable to data breaches
 
-As infrastructure scales, manual tag verification becomes unreliable.
+Public S3 exposure is one of the most common cloud security incidents in AWS environments.
 
-Organizations solve this problem using automated governance enforcement.
+Manual infrastructure reviews do not scale effectively across large engineering teams.
+
+Organizations solve this problem using automated governance enforcement inside CI/CD pipelines.
 
 ---
 
@@ -50,22 +48,26 @@ Organizations solve this problem using automated governance enforcement.
 
 The objective of this project is to implement governance automation that:
 
-- detects missing mandatory tags
-- blocks non-compliant Terraform deployments
-- enforces organizational tagging standards
+- detects insecure S3 configurations
+- blocks public S3 exposure
+- enforces storage security policies
+- validates Terraform infrastructure before deployment
 - integrates governance validation into CI/CD pipelines
 
 ---
 
 # Governance Rule
 
-Every EC2 instance must contain the following tags:
+The following S3 public access settings must always be enabled:
 
-| Tag         | Purpose                |
-| ----------- | ---------------------- |
-| Owner       | Resource ownership     |
-| Environment | Deployment environment |
-| CostCenter  | Billing allocation     |
+| Configuration           | Required Value |
+| ----------------------- | -------------- |
+| block_public_acls       | true           |
+| block_public_policy     | true           |
+| ignore_public_acls      | true           |
+| restrict_public_buckets | true           |
+
+If any value is `false`, governance validation must fail.
 
 ---
 
@@ -93,7 +95,7 @@ Checkov Governance Scan
                 ↓
 Custom Policy Validation
                 ↓
-❌ Missing Mandatory Tags Detected
+❌ Public S3 Access Detected
                 ↓
 Pipeline Failed
                 ↓
@@ -107,35 +109,36 @@ Terraform Deployment Blocked
 This project uses a custom governance policy:
 
 ```text
-policies/mandatory-tags.yaml
+policies/deny-public-s3.yaml
 ```
 
-The policy validates Terraform resources and ensures mandatory tags are present before deployment.
+The policy validates Terraform S3 configurations and blocks insecure public access settings.
 
 ---
 
 # Expected Governance Failure
 
-When Terraform code is missing required tags:
+When insecure S3 public access settings exist:
 
 ```hcl
-tags = {
-  Name = "web-server"
-}
+block_public_acls       = false
+block_public_policy     = false
+ignore_public_acls      = false
+restrict_public_buckets = false
 ```
 
 The governance pipeline should fail automatically.
 
-Expected result:
+Expected Result:
 
 ```text
 ❌ Governance Policy Violation Detected
 
 Policy:
-mandatory-tags
+deny-public-s3
 
 Reason:
-Required governance tags are missing.
+S3 public access protection settings are disabled.
 ```
 
 Infrastructure deployment must be blocked successfully.
@@ -145,13 +148,13 @@ Infrastructure deployment must be blocked successfully.
 # Project Structure
 
 ```text
-02-mandatory-tag-governance/
+03-s3-public-access-governance/
 ├── .github/
 │   └── workflows/
 │       └── governance.yml
 │
 ├── policies/
-│   └── mandatory-tags.yaml
+│   └── deny-public-s3.yaml
 │
 ├── main.tf
 ├── provider.tf
@@ -179,10 +182,10 @@ GitHub Actions workflows must exist at repository root level:
 
 Using a separate repository prevents:
 
-- CI/CD conflicts
-- workflow collisions
-- unintended pipeline triggers
-- governance execution issues
+- workflow conflicts
+- governance pipeline collisions
+- unintended CI/CD execution
+- project dependency issues
 
 ---
 
@@ -203,35 +206,35 @@ Using a separate repository prevents:
 This project demonstrates:
 
 - Terraform governance automation
-- Mandatory tagging enforcement
-- FinOps governance
-- Infrastructure compliance validation
+- S3 security governance
+- Storage compliance enforcement
 - CI/CD governance pipelines
 - Policy-as-Code fundamentals
 - DevSecOps automation
+- Cloud storage security validation
 
 ---
 
 # Real-World Industry Usage
 
-Mandatory tag governance is commonly implemented in:
+S3 governance automation is commonly implemented in:
 
-- Enterprise AWS environments
 - FinTech companies
+- Healthcare systems
+- Enterprise AWS environments
 - SaaS platforms
-- Platform engineering teams
-- Cloud governance environments
-- FinOps organizations
+- Banking infrastructure
+- Cloud security teams
+- Platform engineering organizations
 
 ---
 
 # Production Relevance
 
-This governance pattern is heavily used in enterprise cloud environments for:
+This governance pattern is heavily used in enterprise environments to prevent:
 
-- cost tracking
-- resource ownership
-- compliance reporting
-- automation workflows
-- operational governance
-- cloud resource management
+- public cloud storage exposure
+- accidental data leaks
+- insecure bucket configurations
+- compliance violations
+- storage security misconfigurations
