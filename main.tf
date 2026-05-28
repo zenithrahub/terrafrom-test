@@ -8,11 +8,7 @@ resource "aws_iam_policy" "admin_policy" {
       {
         Effect   = "Allow"
         Action   = "s3.GetObject"
-<<<<<<< HEAD
-        Resource = "arn:aws:s3:::my-bucket/*"
-=======
         Resource = "arn:aws:s3:::example-bucket/*"
->>>>>>> refs/remotes/origin/main
       }
     ]
   })
