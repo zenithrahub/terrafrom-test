@@ -1,6 +1,6 @@
 #!/bin/bash
 
-terraform init
+terrafoir init
 
 terraform fmt -check
 

@@ -1,5 +1,5 @@
 metadata:
-  id: CUSTOM_AWS_504
+  id: CUSTOM_AWS_603
   name: "Ensure Environment tag exists"
   category: "GENERAL_SECURITY"
 
@@ -7,7 +7,7 @@ definition:
   cond_type: attribute
 
   resource_types:
-    - aws_s3_bucket
+    - aws_instance
 
   attribute: tags.Environment
 

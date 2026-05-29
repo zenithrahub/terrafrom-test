@@ -1,42 +1,55 @@
-# Environment Governance Platform
+# Environment Drift Detection Platform
 
-Production-style Terraform governance platform implementing IAM restrictions, mandatory tagging standards, and governance validation automation.
+Production-style Terraform drift detection platform for identifying unmanaged infrastructure changes and configuration drift.
 
 # Scenario
 
-A platform engineering team is implementing governance controls across Terraform environments.
+A platform engineering team manages production infrastructure using Terraform.
 
-The organization requires:
+An engineer manually changes infrastructure through the AWS Console.
 
-- mandatory organizational tags
-- IAM governance controls
-- least privilege enforcement
-- CI/CD governance validation
-- policy-based infrastructure enforcement
+Terraform state no longer matches actual infrastructure.
+
+This creates infrastructure drift.
 
 ---
 
 # Real-World Problem
 
-Without governance automation:
+Without drift detection:
 
-- wildcard IAM permissions get deployed
-- ownership visibility disappears
-- cloud cost attribution fails
-- governance drift increases
-- privilege escalation risks grow
+- manual changes go unnoticed
+- Terraform state becomes inaccurate
+- deployments become unpredictable
+- governance standards break
+- security posture weakens
 
 ---
 
 # Objective
 
-Implement centralized Terraform governance using:
+Implement automated drift detection using:
 
-- custom governance policies
-- IAM restrictions
-- mandatory tags
-- GitHub Actions validation
-- Terraform workspaces
+- Terraform Plan
+- GitHub Actions
+- Governance Validation
+- Checkov Policies
+
+---
+
+# Drift Example
+
+Terraform:
+
+instance_type = "t2.micro"
+
+Manual AWS Change:
+
+instance_type = "t3.medium"
+
+Result:
+
+Terraform detects drift during plan execution.
 
 ---
 
@@ -48,7 +61,7 @@ VERY HIGH
 
 # Security Threat Level
 
-CRITICAL
+HIGH
 
 ---
 
@@ -56,8 +69,7 @@ CRITICAL
 
 Commonly implemented in:
 
-- enterprise AWS platforms
-- regulated environments
-- platform engineering teams
-- cloud governance organizations
-- DevSecOps environments
+- Enterprise AWS Platforms
+- Platform Engineering Teams
+- DevSecOps Organizations
+- Regulated Cloud Environments

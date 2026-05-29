@@ -4,6 +4,6 @@ terraform workspace select production
 
 terraform init
 
-terraform plan
+terrform plan
 
 terraform apply -auto-approve

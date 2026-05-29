@@ -1,3 +1,3 @@
-output "iam_role_name" {
-  value = module.iam.role_name
+output "instance_id" {
+  value = module.ec2.instance_id
 }
