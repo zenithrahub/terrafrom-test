@@ -1,0 +1,9 @@
+policy:
+  name: require-costcenter-tag
+  description: Ensure CostCenter tag exists
+
+rule:
+  resource: "*"
+  check:
+    tag:
+      CostCenter: required

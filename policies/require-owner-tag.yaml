@@ -1,0 +1,9 @@
+policy:
+  name: require-owner-tag
+  description: Ensure Owner tag exists
+
+rule:
+  resource: "*"
+  check:
+    tag:
+      Owner: required

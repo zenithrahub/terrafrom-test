@@ -1,75 +1,126 @@
-# Environment Drift Detection Platform
+# Terraform State Backend Foundation
 
-Production-style Terraform drift detection platform for identifying unmanaged infrastructure changes and configuration drift.
+## Scenario
 
-# Scenario
+A Platform Engineering team manages Terraform infrastructure across multiple AWS environments.
 
-A platform engineering team manages production infrastructure using Terraform.
+Terraform state is currently stored locally on engineer laptops, creating several operational risks:
 
-An engineer manually changes infrastructure through the AWS Console.
+- State file loss
+- Concurrent modification conflicts
+- Lack of state locking
+- No disaster recovery capability
+- No version history
+- No governance enforcement
+- No centralized collaboration
 
-Terraform state no longer matches actual infrastructure.
+The organization has mandated migration to a secure and production-ready Terraform remote state backend.
 
-This creates infrastructure drift.
-
----
-
-# Real-World Problem
-
-Without drift detection:
-
-- manual changes go unnoticed
-- Terraform state becomes inaccurate
-- deployments become unpredictable
-- governance standards break
-- security posture weakens
+Your task is to build the foundational state management platform.
 
 ---
 
-# Objective
+## Objectives
 
-Implement automated drift detection using:
+Implement a Terraform-based remote state backend that provides:
 
-- Terraform Plan
-- GitHub Actions
+- Centralized state storage
+- State locking
+- State versioning
+- State encryption
+- Governance validation
+- CI/CD validation
+- Disaster recovery readiness
+
+---
+
+## Requirements
+
+### State Storage
+
+Provision:
+
+- S3 Bucket for Terraform State
+- Bucket Versioning
+- Server-Side Encryption
+- Public Access Block
+
+### State Locking
+
+Provision:
+
+- DynamoDB Table
+- Terraform State Locking Support
+
+### Governance
+
+Implement policy validation for:
+
+- State bucket encryption
+- State bucket versioning
+- Public access prevention
+- Mandatory tags
+
+### CI/CD
+
+Implement GitHub Actions validation pipeline:
+
+- Terraform Format Check
+- Terraform Validate
+- Checkov Scan
 - Governance Validation
-- Checkov Policies
+
+### Security
+
+Enforce:
+
+- Encryption at Rest
+- Least Privilege Access
+- Public Access Prevention
 
 ---
 
-# Drift Example
+## Intentional Governance Violations
 
-Terraform:
+Create examples that trigger governance failures:
 
-instance_type = "t2.micro"
+- Missing Owner Tag
+- Missing CostCenter Tag
+- Disabled Versioning
+- Disabled Encryption
+- Public Bucket Configuration
 
-Manual AWS Change:
-
-instance_type = "t3.medium"
-
-Result:
-
-Terraform detects drift during plan execution.
+Document remediation procedures.
 
 ---
 
-# Production Occurrence Frequency
+## Deliverables
 
-VERY HIGH
+- Terraform Configuration
+- GitHub Actions Workflow
+- Governance Policies
+- Recovery Validation Scripts
+- Architecture Diagram
+- Workflow Diagram
+- Execution Guide
 
 ---
 
-# Security Threat Level
+## Threat Level
 
-HIGH
+High
 
----
+## Production Frequency
 
-# Real-World Industry Usage
+Very High
 
-Commonly implemented in:
+## Skills Validated
 
-- Enterprise AWS Platforms
-- Platform Engineering Teams
-- DevSecOps Organizations
-- Regulated Cloud Environments
+- Terraform State Management
+- Terraform Backend Architecture
+- S3 Versioning
+- DynamoDB Locking
+- Infrastructure Governance
+- Checkov Security Scanning
+- CI/CD Automation
+- Disaster Recovery Readiness

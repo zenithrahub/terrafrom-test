@@ -1,0 +1,8 @@
+policy:
+  name: require-state-encryption
+  description: Ensure state bucket encryption is enabled
+
+rule:
+  resource: aws_s3_bucket
+  check:
+    encryption_enabled: true

@@ -1,4 +1,13 @@
-# Execution Guide
+# Terraform State Backend Foundation Execution Guide
+
+## Prerequisites
+
+- Terraform >= 1.5
+- AWS CLI
+- AWS Account
+- GitHub Repository
+
+---
 
 ## Initialize Terraform
 
@@ -8,43 +17,31 @@ terraform init
 
 ---
 
-## Create Terraform Workspaces
+## Create Workspace
 
 ```bash
-terraform workspace new dev
-
-terraform workspace new staging
-
-terraform workspace new production
+terraform workspace new shared
 ```
 
 ---
 
-## List Available Workspaces
+## Select Workspace
 
 ```bash
-terraform workspace list
+terraform workspace select shared
 ```
 
 ---
 
-## Select Production Workspace
+## Format Configuration
 
 ```bash
-terraform workspace select production
+terraform fmt -recursive
 ```
 
 ---
 
-## Run Terraform Format Check
-
-```bash
-terraform fmt
-```
-
----
-
-## Validate Terraform Configuration
+## Validate Configuration
 
 ```bash
 terraform validate
@@ -52,211 +49,117 @@ terraform validate
 
 ---
 
-## Run Governance Validation
+## Governance Validation
+
+Validate:
+
+- Encryption
+- Versioning
+- Public Access Protection
+- Mandatory Tags
+
+Run:
 
 ```bash
-chmod +x scripts/validate.sh
-
-./scripts/validate.sh
+checkov -d .
 ```
 
-This validation performs:
+---
 
-- Terraform format validation
-- Terraform configuration validation
-- Checkov governance scanning
-- Custom governance policy validation
+## Generate Execution Plan
+
+```bash
+terraform plan
+```
 
 ---
 
 ## Deploy Infrastructure
 
 ```bash
-chmod +x scripts/deploy.sh
-
-./scripts/deploy.sh
+terraform apply
 ```
 
 ---
 
-## Simulate Infrastructure Drift
+## Disaster Recovery Validation
 
-Deploy infrastructure first.
-
-Open AWS Console:
-
-```text
-AWS Console
-    ↓
-EC2
-    ↓
-Instances
-    ↓
-Select Instance
-```
-
-Modify instance configuration manually:
-
-```text
-Terraform State
-
-instance_type = "t2.micro"
-
-                ↓
-
-Manual AWS Console Change
-
-instance_type = "t3.medium"
-```
-
-Save the change.
-
----
-
-## Detect Drift
-
-Run:
+Simulate state loss:
 
 ```bash
-terraform plan
+chmod +x scripts/simulate-state-loss.sh
+
+./scripts/simulate-state-loss.sh
 ```
 
-Expected Output:
+Restore state:
 
-```text
-Terraform detected the following changes made outside Terraform
+```bash
+chmod +x scripts/restore-state.sh
 
-~ instance_type = "t3.medium"
-→ instance_type = "t2.micro"
+./scripts/restore-state.sh
 ```
 
-Terraform identifies infrastructure drift successfully.
+Validate recovery:
+
+```bash
+chmod +x scripts/validate-recovery.sh
+
+./scripts/validate-recovery.sh
+```
 
 ---
 
-# GitHub Actions Workflow
+## GitHub Actions Validation
 
-This project includes automated drift detection validation using GitHub Actions.
-
-Workflow location:
-
-```text
-.github/workflows/terraform-drift.yml
-```
-
-Pipeline automatically executes:
+Pipeline executes:
 
 - Terraform Init
+- Terraform Format Check
 - Terraform Validate
-- Terraform Drift Detection
-- Checkov Governance Validation
-
-on every:
-
-- push to main
-- pull request
+- Checkov Scan
+- Governance Validation
 
 ---
 
-# Governance Validation
+## Expected Governance Failures
 
-Custom governance policies are located inside:
+Examples:
 
-```text
-policies/
-```
-
-Policies validate:
-
-- public EC2 exposure
-- public SSH access
-- environment tagging standards
+- Missing Owner Tag
+- Missing CostCenter Tag
+- Disabled Versioning
+- Disabled Encryption
+- Public Bucket Access
 
 ---
 
-# Expected Governance Failures
+## Remediation
 
-The following insecure configurations intentionally exist:
-
-```hcl
-associate_public_ip_address = true
-```
-
-```hcl
-cidr_blocks = ["0.0.0.0/0"]
-```
-
-Expected Checkov results:
-
-```text
-CUSTOM_AWS_601
-CUSTOM_AWS_602
-```
-
-This demonstrates governance automation blocking insecure infrastructure configurations.
+- Enable Encryption
+- Enable Versioning
+- Block Public Access
+- Add Required Tags
 
 ---
 
-# Expected Drift Detection Result
+## Production Recommendations
 
-Terraform state:
+Use:
 
-```hcl
-instance_type = "t2.micro"
-```
-
-Actual AWS infrastructure:
-
-```hcl
-instance_type = "t3.medium"
-```
-
-Terraform plan detects drift and reports the mismatch before deployment.
+- S3 Backend
+- DynamoDB State Locking
+- Least Privilege IAM
+- Multi-Account Architecture
+- Automated Governance Validation
 
 ---
 
-# Optional Production Backend Configuration
+## Production Remote State
 
-If using remote Terraform state in production:
+If using production remote state, configure:
 
-- AWS S3 Backend
+- S3 Backend
 - DynamoDB State Locking
 
-can be configured using:
-
-```text
-backend.tf
-```
-
----
-
-# Recommended Workflow
-
-```text
-Developer Deploys Infrastructure
-                ↓
-Manual AWS Change
-                ↓
-Infrastructure Drift Created
-                ↓
-Terraform Plan
-                ↓
-Drift Detected
-                ↓
-Governance Validation
-                ↓
-Remediation
-```
-
----
-
-# Production Usage
-
-This drift detection pattern is commonly used in:
-
-- Enterprise AWS Platforms
-- Platform Engineering Teams
-- DevSecOps Organizations
-- Regulated Cloud Environments
-- Financial Services Infrastructure
-- SaaS Production Platforms
+before team adoption.

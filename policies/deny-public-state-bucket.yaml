@@ -1,0 +1,8 @@
+policy:
+  name: deny-public-state-bucket
+  description: Prevent public access on state bucket
+
+rule:
+  resource: aws_s3_bucket
+  check:
+    public_access: false

@@ -1,0 +1,8 @@
+policy:
+  name: require-versioning
+  description: Ensure bucket versioning is enabled
+
+rule:
+  resource: aws_s3_bucket
+  check:
+    versioning_enabled: true
